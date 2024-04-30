@@ -10,38 +10,47 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-
 public class GenerateInfoFiles {
     
-    private static final String rutaDatos = "src/cfdp/datos";
-    private static final String archivoVendedores = "vendedores.csv";
-    private static final String archivoProductos = "productos.csv";
+    private static final String rutaDatos = "src/cfdp/datos"; //Ruta a los datos
+    private static final String archivoVendedores = "vendedores.csv"; //Nombre del archivo de datos de los vendedores
+    private static final String archivoProductos = "productos.csv"; //Nombre del archivo de datos de los productos
 
     public static void main(String[] args) throws IOException {
         
-        
         Scanner scanner = new Scanner(System.in);
-
-        // Preguntar si desea agregar un nuevo Vendedor o producto
-        System.out.println("¿Que desea hacer?");
-        System.out.println("1. Crear productos");
-        System.out.println("2. Crear vendedores");
-        System.out.println("3. Generar registros aleatorios");
+        boolean estado = true; // Variable booleana para determinar si el programa debe seguir en ejecución
         
-        int opcion = scanner.nextInt();
+        while(estado == true){ // Bucle para repetir la ejecución del programa
+            System.out.println("Que desea hacer?");
+            System.out.println("1. Crear productos");
+            System.out.println("2. Crear vendedores");
+            System.out.println("3. Generar registros aleatorios");
+            System.out.println("4. Salir");
+            System.out.println("");
 
-        // Agregar Vendedor
-        switch (opcion) {
-            case 1 -> {
-                crearProducto(scanner);
+            int opcion = scanner.nextInt(); // Variable para almacenar la opción que seguirá el programa
+
+            switch (opcion) { // Swicth que permitirá ir a la función predeterminada de cada opción
+                case 1 -> {
+                    scanner.nextLine();
+                    crearProducto(scanner);
+                }
+                case 2 -> {
+                    scanner.nextLine();
+                    crearVendedor(scanner);
+                }
+                case 3 -> {
+                    scanner.nextLine();
+                    generar();
+
+                }
+                case 4 -> {
+                    estado = false;
+                }
+                default -> System.out.println("Opción no válida.");
             }
-            case 2 -> {
-                crearVendedor(scanner);
-            }
-            case 3 -> {
-                generar();
-            }
-            default -> System.out.println("Opción no válida.");
+            
         }
     }
     /**
@@ -61,12 +70,15 @@ public class GenerateInfoFiles {
         
         Producto producto = new Producto(idProducto, nombre, precioUnidad);
         
-        File archivo = new File(rutaDatos, archivoProductos);
+        File archivo = new File(rutaDatos, archivoProductos); // Se escriben los datos recibidos en el archivo
         try (FileWriter escritor = new FileWriter(archivo, true)) {
             escritor.append(String.valueOf(producto.getIdProducto()) + ";");
             escritor.append(producto.getNombre() + ";");
             escritor.append(String.valueOf(producto.getPrecioUnidad()) + "\n");
         }
+        System.out.println("\n\n");
+        System.out.println("Producto creado!");
+        System.out.println("\n\n");
     }   
     /**
     * Metodo que pregunta y crea el registro en el archivo CSV de vendedores
@@ -91,14 +103,19 @@ public class GenerateInfoFiles {
         
         File archivo = new File(rutaDatos, archivoVendedores);
         
-        try (FileWriter escritor = new FileWriter(archivo, true)) {
+        try (FileWriter escritor = new FileWriter(archivo, true)) {// Se escriben los datos recibidos en el archivo
             escritor.append(vendedor.getTipoDocumento() + ";");
             escritor.append(vendedor.getNumeroDocumento() + ";");
             escritor.append(vendedor.getNombres() + ";");
             escritor.append(vendedor.getApellidos() + "\n");
         }
+        System.out.println("\n\n");
+        System.out.println("Vendedor creado!");
+        System.out.println("\n\n");
     }
-    
+    /**
+    * Metodo que genera al azar las ventas por cada vendedor registrado
+    */
     private static void generar() throws FileNotFoundException, IOException{
         BufferedReader vendedores = new BufferedReader(new FileReader(rutaDatos+"/"+archivoVendedores));
         String lineaVendedores;
@@ -130,7 +147,8 @@ public class GenerateInfoFiles {
                 }
             }
         }
-
-    }
-     
+        System.out.println("\n\n");
+        System.out.println("Archivos generados!");
+        System.out.println("\n\n");
+    }     
 }
